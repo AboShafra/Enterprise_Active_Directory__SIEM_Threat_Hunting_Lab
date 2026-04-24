@@ -28,6 +28,8 @@ This project involved engineering a virtualized enterprise Active Directory envi
 ## 🏗️ Logical Architecture
 The lab operated within a custom isolated virtual network (192.168.7.0/24) to safely monitor malicious activity.
 
+![Network Topology](network_topology.png)
+
 * **Domain Controller (ADDC01):** 192.168.7.100
 * **Target Workstation (Windows 10):** 192.168.7.10
 * **Splunk Server:** 192.168.7.132
@@ -41,6 +43,8 @@ To ensure high-visibility threat hunting, I engineered a robust log ingestion pi
 2. **Log Transport:** Configured Splunk Universal Forwarders to route logs securely over TCP port 9997.
 3. **Normalization:** Operationalized the Splunk Add-on for Microsoft Windows to ensure CIM compliance.
 
+![Raw Events](splunk_raw_events.png)
+
 ---
 
 ## ⚔️ Attack Simulation & Detection Logic
@@ -50,10 +54,16 @@ To ensure high-visibility threat hunting, I engineered a robust log ingestion pi
 * **Detection Logic:** Engineered an SPL query to detect high-volume authentication failures (EventCode 4625) within a 5-minute threshold.
 * **Findings:** The SIEM successfully correlated error code `0xc000006d` (bad authentication) originating from the attacker's IP 192.168.7.250.
 
+![Hydra Attack](hydra_bruteforce_attack.png)
+![Brute Force Detection](splunk_bruteforce_detection.png)
+
 ### 2. Local Account Creation (Persistence - T1136.001)
 * **Attack:** Automated simulation via Atomic Red Team to create rogue administrator accounts.
 * **Detection Logic:** Monitored Sysmon Event ID 1 (Process Creation) to hunt for `net.exe` command-line arguments.
 * **Findings:** Extracted exact command-line arguments: `net user /add "T1136.001_Admin"` and identified `cmd.exe` as the parent process.
+
+![Atomic Red Team](atomic_red_team_execution.png)
+![Persistence Detection](splunk_persistence_detection.png)
 
 ---
 
@@ -67,6 +77,13 @@ To ensure high-visibility threat hunting, I engineered a robust log ingestion pi
 ## 🔧 Engineering Challenges
 * **Transparent DNS Sinkholing:** Resolved installation failures for Atomic Red Team by hardcoding authoritative IPs into the Windows hosts file.
 * **SIEM Pipeline Time-Drift:** Fixed visibility issues caused by NTP desynchronization between the hypervisor and the domain clocks.
+
+---
+
+## 📂 Project Documentation
+For a deep dive into the technical architecture, attack timelines, and mitigation strategies, please refer to the full report:
+
+👉 **[Download Full Project PDF (Whitepaper)](Enterprise_Active_Directory__SIEM_Threat_Hunting_Lab.pdf)**
 
 ---
 *Developed by Ibrahim Abdulsalam Alshami | 2026*
